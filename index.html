@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Frame Extractor - Web Version</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .slider-thumb::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .slider-thumb::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        .loading {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        .drag-over {
+            border-color: #3b82f6 !important;
+            background-color: #eff6ff !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+            <div class="max-w-7xl mx-auto px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Auto Frame Extractor</h1>
+                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Web Version</span>
+                    </div>
+                    <div class="text-sm text-gray-500">by Wombat Soft</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-4xl mx-auto p-6">
+            <div class="space-y-6">
+                <!-- Web App Notice -->
+                <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <div class="flex items-start space-x-3">
+                        <svg class="w-5 h-5 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div>
+                            <h3 class="text-sm font-medium text-blue-900 dark:text-blue-300">Web Version Features</h3>
+                            <p class="text-xs text-blue-700 dark:text-blue-400 mt-1">
+                                • Works entirely in your browser - no installation needed<br>
+                                • Native drag & drop support<br>
+                                • All processing happens locally on your device<br>
+                                • No data sent to servers
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Selection -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Video Selection</h2>
+                    
+                    <!-- Drag and Drop Area -->
+                    <div id="drop-zone" class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center mb-4 transition-colors hover:border-blue-400 dark:hover:border-blue-500 cursor-pointer">
+                        <div class="flex flex-col items-center space-y-3">
+                            <svg class="w-12 h-12 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                            </svg>
+                            <div>
+                                <p class="text-lg font-medium text-gray-900 dark:text-white">Drop video file here</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">or click to browse</p>
+                            </div>
+                            <div class="text-xs text-gray-400 dark:text-gray-500">
+                                Supports: MP4, MOV, AVI, MKV, WebM
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <input type="file" id="file-input" accept="video/*" class="hidden">
+                    
+                    <div id="selected-video" class="mt-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hidden">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                            </svg>
+                            <span id="video-name" class="text-gray-700 dark:text-gray-300 font-medium"></span>
+                            <span id="video-size" class="text-sm text-gray-500"></span>
+                        </div>
+                        <div id="video-info" class="text-xs text-gray-500 space-y-1"></div>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Settings</h2>
+                    
+                    <!-- Frame Interval Slider -->
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-3">
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Frame Interval</label>
+                            <span id="frame-interval-value" class="text-sm font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">3.0s</span>
+                        </div>
+                        <input type="range" id="frame-interval" min="1" max="100" value="30" step="1" class="slider-thumb w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer">
+                        <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            <span>0.1s</span>
+                            <span>10.0s</span>
+                        </div>
+                    </div>
+
+                    <!-- Quality Scoring Toggle -->
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Image Quality Scoring</label>
+                            <div class="flex items-center">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="quality-scoring-toggle" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                </label>
+                                <span id="quality-toggle-status" class="ml-3 text-sm font-medium text-blue-600 dark:text-blue-400">ON</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Quality Scoring Info -->
+                        <div id="quality-scoring-info" class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                            <h3 class="text-sm font-medium text-blue-900 dark:text-blue-300 mb-3">Image Quality Scoring Criteria</h3>
+                            <div class="text-xs text-blue-700 dark:text-blue-400 space-y-1 mb-4">
+                                <div>• Sharpness (Focus Quality): 30 points</div>
+                                <div>• Brightness (Optimal Exposure): 25 points</div>
+                                <div>• Contrast (Dynamic Range): 25 points</div>
+                                <div>• Composition (Visual Balance): 20 points</div>
+                            </div>
+                            
+                            <!-- Top Frames Percentage Slider -->
+                            <div class="border-t border-blue-200 dark:border-blue-700 pt-3">
+                                <div class="flex justify-between items-center mb-2">
+                                    <label class="text-xs font-medium text-blue-900 dark:text-blue-300">Keep Top Frames</label>
+                                    <span id="top-frames-percentage-value" class="text-xs font-mono bg-blue-100 dark:bg-blue-800 px-2 py-1 rounded">10%</span>
+                                </div>
+                                <input type="range" id="top-frames-percentage" min="1" max="20" value="10" step="1" class="slider-thumb w-full h-1.5 bg-blue-200 dark:bg-blue-600 rounded-lg appearance-none cursor-pointer">
+                                <div class="flex justify-between text-xs text-blue-600 dark:text-blue-500 mt-1">
+                                    <span>1%</span>
+                                    <span>20%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Simple Mode Info -->
+                        <div id="simple-mode-info" class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600 hidden">
+                            <h3 class="text-sm font-medium text-gray-900 dark:text-gray-300 mb-2">Simple Frame Extraction Mode</h3>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">
+                                All frames will be extracted at the specified interval without quality filtering.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Start Processing Button -->
+                    <button id="start-processing" disabled class="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.5a1.5 1.5 0 011.5 1.5V12a1.5 1.5 0 01-3 0V9.75"></path>
+                        </svg>
+                        <span>Start Processing</span>
+                    </button>
+                </div>
+
+                <!-- Progress Section -->
+                <div id="progress-section" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hidden">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Processing Progress</h2>
+                    
+                    <!-- Progress Bar -->
+                    <div class="mb-6">
+                        <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
+                            <span>Progress</span>
+                            <span id="progress-percentage">0%</span>
+                        </div>
+                        
+                        <div class="relative w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
+                            <div id="progress-bar" class="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-green-500 rounded-full transition-all duration-300 ease-out" style="width: 0%"></div>
+                        </div>
+                        
+                        <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            <span id="current-frame">Frame 0</span>
+                            <span id="total-frames-label">Total: 0</span>
+                        </div>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                        <span>Status: </span>
+                        <span id="processing-status" class="font-medium text-blue-600 dark:text-blue-400">Ready to start...</span>
+                    </div>
+
+                    <!-- Cancel Button -->
+                    <button id="cancel-processing" class="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                        Cancel Processing
+                    </button>
+                </div>
+
+                <!-- Results Section -->
+                <div id="results-section" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hidden">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Extracted Frames</h2>
+                    <div id="frames-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                        <!-- Frames will be added here dynamically -->
+                    </div>
+                    <div class="mt-4 flex space-x-4">
+                        <button id="download-all" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path>
+                            </svg>
+                            <span>Download All</span>
+                        </button>
+                        <button id="download-top" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                            </svg>
+                            <span>Download Top Rated</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading FFmpeg Notice -->
+    <div id="ffmpeg-loading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-sm mx-4">
+            <div class="flex items-center space-x-3 mb-4">
+                <div class="loading w-6 h-6 bg-blue-600 rounded-full"></div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Loading Video Processor</h3>
+            </div>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                Downloading FFmpeg WebAssembly module...
+            </p>
+            <div class="text-xs text-gray-500">This may take a few moments on first load</div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
